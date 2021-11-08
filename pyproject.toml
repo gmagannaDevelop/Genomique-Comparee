@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "genomique-comparee"
+version = "0.1.0"
+description = "Cours genomique comparee"
+authors = ["Gustavo Magaña López <28574085+gmagannaDevelop@users.noreply.github.com>"]
+license = "BSD3"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pandas = "^1.3.4"
+biopython = "^1.79"
+matplotlib = "^3.4.3"
+scikit-learn = "^1.0.1"
+seaborn = "^0.11.2"
+plotnine = "^0.8.0"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.11.1"
+black = "^21.10b0"
+ipython = "^7.29.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
