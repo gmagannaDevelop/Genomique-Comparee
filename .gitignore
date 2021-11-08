@@ -2,6 +2,7 @@
 ######### custom .gitignore
 
 /**/*.bl
+.vscode
 
 
 ######### GIT Default Python .gitignore
