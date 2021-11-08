@@ -35,8 +35,8 @@ class TestParsing(unittest.TestCase):
         """Choose n random file amongst self.blast_files"""
         return list(np.random.choice(self.blast_files, n))
 
-    def test_parse_strains_from_filename(self):
-        """ """
+    def test_number_of_strains_from_filename(self):
+        """Test that each file is only comparing two strains"""
         files = [
             Path(
                 "ready_blast_outputs/Escherichia_coli_str_k_12_substr_mg1655-vs-Escherichia_coli_str_k_12_substr_w3110.bl"
