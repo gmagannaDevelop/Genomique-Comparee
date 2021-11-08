@@ -1,3 +1,11 @@
+
+######### custom .gitignore
+
+/**/*.bl
+
+
+######### GIT Default Python .gitignore
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
