@@ -3,6 +3,7 @@
 
 /**/*.bl
 .vscode
+playground
 
 
 ######### GIT Default Python .gitignore
