@@ -2,8 +2,10 @@
 ######### custom .gitignore
 
 /**/*.bl
+/**/*.csv
 .vscode
 playground
+/config.toml
 
 
 ######### GIT Default Python .gitignore
