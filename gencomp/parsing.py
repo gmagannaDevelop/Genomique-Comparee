@@ -41,3 +41,24 @@ def parse_blast_to_dataframe(file: Union[str, Path]):
             g, sep=_config.parsing.separator, header=None, names=_config.parsing.columns
         )
     return x
+
+
+def parse_blast_to_dict(file: Union[str, Path]):
+    """ """
+    data = dict()
+    names = _config.parsing.criteria.names
+    is_int = _config.parsing.criteria.is_int
+    with Tidy(file, separator=_config.parsing.separator) as g:
+        for line in g.readlines():
+            query, target, *criteria = line.strip().split(_config.parsing.separator)
+
+            if query not in data.keys():
+                data.update({query: dict()})
+
+            name_value_type = zip(names, criteria, is_int)
+            data[query][target] = {
+                name: int(value) if _type else float(value)
+                for name, value, _type in name_value_type
+            }
+
+    return data

@@ -10,6 +10,18 @@ columns = [
     "s. start", "s. end", "e-value", "bit score", 
     "query length", "subject length"
 ]
+criteria.names = [
+    "% identity", "alignment length", 
+    "mismatches", "gap opens", "gaps", "q. start", "q. end", 
+    "s. start", "s. end", "e-value", "bit score", 
+    "query length", "subject length"
+]
+criteria.is_int = [
+    false, true,
+    true, true, true, true, true,
+    true, true, false, false, 
+    true, true
+]
 
 [parsing.file]
 extension = ".bl"
