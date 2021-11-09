@@ -16,7 +16,6 @@ seaborn = "^0.11.2"
 plotnine = "^0.8.0"
 tidycsv = "^0.1.2"
 toml = "^0.10.2"
-pandasgui = "^0.2.13"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"
