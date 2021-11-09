@@ -3,6 +3,7 @@
 
 /**/*.bl
 /**/*.csv
+ready_blast_outputs
 .vscode
 playground
 /config.toml
