@@ -3,9 +3,14 @@
 example_file = "ready_blast_outputs/Escherichia_coli_536-vs-Escherichia_coli_536.bl"
 
 [parsing]
+separator = "\t"
 columns = [
     "query id", "subject id", "% identity", "alignment length", 
     "mismatches", "gap opens", "gaps", "q. start", "q. end", 
     "s. start", "s. end", "e-value", "bit score", 
     "query length", "subject length"
 ]
+
+[parsing.file]
+extension = ".bl"
+strain_sep = "-vs-"

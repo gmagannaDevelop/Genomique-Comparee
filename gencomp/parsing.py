@@ -22,7 +22,9 @@ with open(__CONFIG_FILE__, "r", encoding="utf-8") as f:
 
 
 def parse_strains_from_filename(
-    file_name: Union[str, Path], extension: str = ".bl", split_on: str = "-vs-"
+    file_name: Union[str, Path],
+    extension: str = _config.parsing.file.extension,
+    split_on: str = _config.parsing.file.strain_sep,
 ) -> List[str]:
     """Return a list containing the two compared strains from a filename"""
     if isinstance(file_name, Path):
@@ -34,6 +36,8 @@ def parse_strains_from_filename(
 
 def parse_blast_to_dataframe(file: Union[str, Path]):
     """ """
-    with Tidy(file, separator="\t") as f:
-        x = pd.read_csv(f, sep="\t", header=None, names=_config.parsing.columns)
+    with Tidy(file, separator=_config.parsing.separator) as g:
+        x = pd.read_csv(
+            g, sep=_config.parsing.separator, header=None, names=_config.parsing.columns
+        )
     return x
