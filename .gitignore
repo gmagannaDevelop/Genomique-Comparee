@@ -5,10 +5,11 @@ Data
 
 /**/*.bl
 /**/*.csv
-ready_blast_outputs
+blast_outputs
 .vscode
 playground
 /config.toml
+/*.py
 
 
 ######### GIT Default Python .gitignore
