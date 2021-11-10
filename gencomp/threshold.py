@@ -12,20 +12,23 @@
 
 from typing import Dict, Union, Any, Optional
 from functools import partial
+from datetime import datetime as dt
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 
 
-def add_extra_criteria(blast: pd.DataFrame) -> pd.DataFrame:
+def add_extra_criteria(blast: pd.DataFrame, in_place=False) -> pd.DataFrame:
     """Calculate a series of parameters used to
     discriminate which entries should be kept to
     search for a core genome from a series of
     blast files (*.bl)"""
 
-    blast = blast.copy()
+    if not in_place:
+        blast = blast.copy()
     blast["coverage"] = (blast["s. end"] - blast["s. start"]) / blast["subject length"]
+    blast["log_bit_score"] = np.log(blast["bit score"] + 1)
     return blast
 
 
@@ -59,8 +62,9 @@ def compute_threshold(
     return _criteria
 
 
-def compute_and_plot_criteria(
+def plot_criteria(
     column: pd.Series,
+    criteria: Dict[str, Union[int, float]],
     show_plot: bool = True,
     save_figure: bool = False,
     figure_filename: Optional[str] = None,
@@ -79,16 +83,24 @@ def compute_and_plot_criteria(
     nbins = list(map(_round, bins))
     plt.xticks(bins, nbins)
 
-    thresh = compute_threshold(column)
-    for key, value in thresh.items():
+    # add vertical lines
+    for key, value in criteria.items():
         colour = "r" if key == "threshold" else "g"
         plt.axvline(value, color=colour, label=f"{key} = {_round(value)}")
 
+    # add annotations
     plt.legend()
     plt.title(
         f"Distribution, means, and threshold for '{column.name}'",
         loc="center",
         fontsize=14,
     )
-    plt.ion()
-    plt.show()
+
+    if save_figure:
+        _filename = f"{column.name}-{str(dt.now()).split('.')[0]}.png"
+        _filename = figure_filename if figure_filename else _filename
+        plt.savefig(_filename)
+
+    if show_plot:
+        plt.ion()
+        plt.show()
