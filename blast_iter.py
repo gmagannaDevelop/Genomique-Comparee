@@ -19,14 +19,15 @@ data_dir = path("blast_outputs/")
 blast = dict()
 for file in data_dir.glob("*.bl"):
     query, target = parse_strains_from_filename(file.name)
-    # print(f"{query} : {target}")
-    if query not in blast.keys():
-        blast.update({query: dict()})
+    if query != target:
+        # print(f"{query} : {target}")
+        if query not in blast.keys():
+            blast.update({query: dict()})
 
-    blast[query][target] = parse_blast_to_dict(file)
+        blast[query][target] = parse_blast_to_dict(file)
 
-    # with Tidy(file, separator=_config.parsing.separator) as g:
-    #   tmp_df = parse_blast_to_dataframe(file)
-    #   tmp_df["query_strain"] = query
-    #   tmp_df["query_target"] = target
-    #   blast = pd.concat([blast, tmp_df], axis="rows")
+        # with Tidy(file, separator=_config.parsing.separator) as g:
+        #   tmp_df = parse_blast_to_dataframe(file)
+        #   tmp_df["query_strain"] = query
+        #   tmp_df["query_target"] = target
+        #   blast = pd.concat([blast, tmp_df], axis="rows")
