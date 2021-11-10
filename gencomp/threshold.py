@@ -32,8 +32,9 @@ def add_extra_criteria(blast: pd.DataFrame, in_place=False) -> pd.DataFrame:
     return blast
 
 
+# TODO : discuss the weighting average
 def compute_threshold(
-    column: pd.Series, **kmeans_kwargs
+    column: pd.Series, weighted: bool = False, **kmeans_kwargs
 ) -> Dict[str, Union[int, float]]:
     """
     Default `kmeans_kwargs`:
@@ -53,13 +54,25 @@ def compute_threshold(
                 ]
             )
         )
-    kmeans = KMeans(**_kmeans_kw).fit(column.to_numpy().reshape(-1, 1))
-    _criteria = {
-        "mean1": kmeans.cluster_centers_[0][0],
-        "mean2": kmeans.cluster_centers_[1][0],
-        "threshold": kmeans.cluster_centers_.mean(),
+
+    data = column.to_numpy().reshape(-1, 1)
+    kmeans = KMeans(**_kmeans_kw).fit(data)
+    mean1 = kmeans.cluster_centers_[0][0]
+    mean2 = kmeans.cluster_centers_[1][0]
+
+    if weighted:
+        _prop_upper = kmeans.labels_.mean()
+        _propr_lower = 1.0 - _prop_upper
+        threshold = _propr_lower * mean1 + _prop_upper * mean2
+    else:
+        threshold = kmeans.cluster_centers_.mean()
+
+    criteria = {
+        "mean1": mean1,
+        "mean2": mean2,
+        "threshold": threshold,
     }
-    return _criteria
+    return criteria
 
 
 def plot_criteria(
@@ -70,12 +83,17 @@ def plot_criteria(
     figure_filename: Optional[str] = None,
     **hist_kw,
 ):
-    """ """
+    """Plot the computed criteria for the given column.
+    'criteria' should be the output of threshold.compute_threshold()
+    This function will generate a histogram with the lines corresponding
+    to the two found means and the threshold which is calculated
+    averaging the means of the two groups, computed via sklearn.cluster.KMeans
+    """
     _hist_kw = dict(bins=30)
     if hist_kw:
         _hist_kw.update(hist_kw)
     # Create figure:
-    fig, ax = plt.subplots(1, 1, figsize=(16, 8))
+    _fig, ax = plt.subplots(1, 1, figsize=(16, 8))
     ax.tick_params(axis="x", rotation=45)
 
     _n, bins, _patches = plt.hist(column, **_hist_kw)
