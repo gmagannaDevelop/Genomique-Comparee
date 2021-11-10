@@ -3,6 +3,9 @@ placeholder
 wait for real docstring
 """
 
+# TODO : discuss creating a BlastParser Class, in order
+# to be able to specify criteria at instantiation time.
+
 import copy
 from pathlib import Path
 from typing import Union, List, Dict, Optional
@@ -42,7 +45,7 @@ def parse_strains_from_filename(
     return file_name.rstrip(extension).split(split_on)
 
 
-def parse_blast_to_dataframe(file: Union[str, Path]) -> pd.DataFrame:
+def parse_blast_file_to_dataframe(file: Union[str, Path]) -> pd.DataFrame:
     """ """
     with Tidy(file, separator=_config.parsing.separator) as g:
         x = pd.read_csv(
@@ -51,7 +54,7 @@ def parse_blast_to_dataframe(file: Union[str, Path]) -> pd.DataFrame:
     return x
 
 
-def parse_blast_to_dict(
+def parse_blast_file_to_dict(
     file: Union[str, Path],
     thresholds: Dict[str, Union[int, float]] = _thresholds,
     n_pass: Optional[int] = None,
