@@ -167,14 +167,15 @@ def parse_blast_directory_to_dict(
     _heaviest_load = max(len(files) for files in _parallel_partition_dict.values())
     n_groups = min(n_threads, _heaviest_load)
     blast_dict = dict()
-    for query, files in _parallel_partition_dict.items():
-        if query not in blast_dict.keys():
-            blast_dict.update({query: dict()})
-            with mp.Pool(n_groups) as pool:
+
+    with mp.Pool(n_groups) as pool:
+        for query, files in _parallel_partition_dict.items():
+            if query not in blast_dict.keys():
+                blast_dict.update({query: dict()})
                 results = pool.map(_parallel_parsing_helper, files)
-            __ = [results[0].update(result) for result in results[1:]]
-            blast_dict[query] = results[0]
-        else:
-            raise KeyError
+                __ = [results[0].update(result) for result in results[1:]]
+                blast_dict[query] = results[0]
+            else:
+                raise KeyError
 
     return blast_dict
