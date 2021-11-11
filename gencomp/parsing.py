@@ -8,7 +8,9 @@ wait for real docstring
 
 import copy
 from pathlib import Path
-from typing import Union, List, Dict, Optional
+from typing import Union, List, Dict, Optional, Any
+from collections import namedtuple
+import multiprocessing as mp
 
 import toml
 import numpy as np
@@ -30,6 +32,8 @@ with open(__THRESHOLDS_FILE__, "r", encoding="utf-8") as f:
     _thresholds = _thresholds_df.loc[
         "threshold",
     ].to_dict()
+
+BlastFile = namedtuple("BlastFile", ["query", "target", "file"])
 
 
 def parse_strains_from_filename(
@@ -126,9 +130,51 @@ def compute_selection_criteria(
     return criteria
 
 
-# def check_entry_meets_criteria(
-#    entry: Dict[str, Union[int, float]],
-# ):
-#    """According to the discussion we had in class"""
-#    coverage = entry["s. start"] - entry["s. end"] / entry["subject length"]
-#    return None
+def _parallel_parsing_helper(blast: BlastFile):
+    """ """
+    return {blast.target: parse_blast_file_to_dict(blast.file)}
+
+
+def parse_blast_directory_to_dict(
+    directory: Union[str, Path], n_threads: Optional[int] = None
+):
+    """ """
+    if isinstance(directory, str):
+        directory = Path(directory)
+    elif not isinstance(directory, str):
+        raise TypeError(f"Expected `pathlib.Path` or `str` but got {type(directory)}")
+
+    if not directory.exists():
+        raise FileNotFoundError(
+            f"Specified directory {directory.absolute().as_posix()} does not exist"
+        )
+    if not directory.is_dir():
+        raise ValueError(f"Expected a directory.")
+
+    n_threads = min(n_threads, mp.cpu_count()) if n_threads else mp.cpu_count()
+    # Blast outputs :
+    blast_file_ls = list(directory.glob("*.bl"))
+    # Blast objects (query, target, path), inderred from the filename :
+    _blast_f = lambda x: BlastFile(*parse_strains_from_filename(x.name), x)
+    _blasts_ls = [_blast_f(file) for file in blast_file_ls]
+
+    _queries = list(set(bl.query for bl in _blasts_ls))
+    _parallel_partition_dict = {
+        query: [b for b in _blasts_ls if b.query == query and not b.query == b.target]
+        for query in _queries
+    }
+
+    _heaviest_load = max(len(files) for files in _parallel_partition_dict.values())
+    n_groups = min(n_threads, _heaviest_load)
+    blast_dict = dict()
+    for query, files in _parallel_partition_dict.items():
+        if query not in blast_dict.keys():
+            blast_dict.update({query: dict()})
+            with mp.Pool(n_groups) as pool:
+                results = pool.map(_parallel_parsing_helper, files)
+            __ = [results[0].update(result) for result in results[1:]]
+            blast_dict[query] = results[0]
+        else:
+            raise KeyError
+
+    return blast_dict
