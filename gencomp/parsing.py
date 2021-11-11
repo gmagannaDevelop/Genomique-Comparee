@@ -99,15 +99,9 @@ def parse_blast_file_to_dict(
                 )
                 if _passed >= n_pass:
                     data[query][target] = _entry
-        except KeyError:
+        except KeyError as __k_e:
             raise KeyError(
-                "\n".join(
-                    [
-                        "`thresholds` contains keys absent in entry file",
-                        f"{criteria.keys()}",
-                        f"{thresholds.keys()}",
-                    ]
-                )
+                f"`thresholds` contains keys absent in entry file : {__k_e}"
             ) from None
 
     return data
@@ -149,7 +143,7 @@ def parse_blast_directory_to_dict(
             f"Specified directory {directory.absolute().as_posix()} does not exist"
         )
     if not directory.is_dir():
-        raise ValueError(f"Expected a directory.")
+        raise ValueError("Expected a directory.")
 
     n_threads = min(n_threads, mp.cpu_count()) if n_threads else mp.cpu_count()
     # Blast outputs :
