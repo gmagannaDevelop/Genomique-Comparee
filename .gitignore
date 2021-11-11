@@ -10,6 +10,7 @@ blast_outputs
 playground
 /config.toml
 /*.py
+/legacy
 
 
 ######### GIT Default Python .gitignore
