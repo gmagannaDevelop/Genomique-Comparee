@@ -88,19 +88,20 @@ def parse_blast_file_to_dict(
                 query, target, *criteria = line.strip().split(_config.parsing.separator)
 
                 if query not in data.keys():
-                    data.update({query: dict()})
+                    # data.update({query: dict()})
 
-                name_value_type = zip(names, criteria, is_int)
-                _entry = {
-                    name: int(value) if _type else float(value)
-                    for name, value, _type in name_value_type
-                }
-                criteria = compute_selection_criteria(_entry)
-                _passed = sum(
-                    1 for i in thresholds.keys() if criteria[i] > thresholds[i]
-                )
-                if _passed >= n_pass:
-                    data[query][target] = _entry
+                    name_value_type = zip(names, criteria, is_int)
+                    _entry = {
+                        name: int(value) if _type else float(value)
+                        for name, value, _type in name_value_type
+                    }
+                    criteria = compute_selection_criteria(_entry)
+                    _passed = sum(
+                        1 for i in thresholds.keys() if criteria[i] > thresholds[i]
+                    )
+                    if _passed >= n_pass:
+                        data[query] = target
+                        # data[query][target] = _entry
         except KeyError as __k_e:
             raise KeyError(
                 f"`thresholds` contains keys absent in entry file : {__k_e}"
