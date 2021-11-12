@@ -32,6 +32,8 @@ with open(__THRESHOLDS_FILE__, "r", encoding="utf-8") as f:
     _thresholds = _thresholds_df.loc[
         "threshold",
     ].to_dict()
+    thresholds_df = _thresholds_df.copy()
+    thresholds_dict = _thresholds.copy()
 
 BlastFile = namedtuple("BlastFile", ["query", "target", "file"])
 
