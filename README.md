@@ -5,6 +5,7 @@ Students :
 
     * Théo Roncalli
     * Gustavo Magaña López
+    * Anthony Boutard
 
 Parse the whole `blast_outputs` directory into a dict, 
 using the `gencomp` python package:
