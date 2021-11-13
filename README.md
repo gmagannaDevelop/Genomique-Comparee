@@ -16,3 +16,16 @@ from gencomp.parsing import parse_blast_directory_to_dict
 
 blast_data_dict = parse_blast_directory_to_dict("blast_outputs")
 ```
+
+This will give you a dictionnary as follows:
+
+```python
+blast_data_dict["query_strain"]["target_strain"]["target_gene"] = "query_gene"
+```
+
+All of these entries have been selected according to our thresholds computed by KMeans.
+
+## TODO 
+ 
+* Compute Bidirectional Best Hits (should be trivial with the previous dict).
+* Compute the clique.
