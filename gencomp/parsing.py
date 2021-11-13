@@ -60,6 +60,21 @@ def parse_blast_file_to_dataframe(file: Union[str, Path]) -> pd.DataFrame:
     return x
 
 
+# def _f_eval_threshold(
+#    key: str,
+#    entry: Dict[str, Union[int, float]],
+#    threshold: Dict[str, Union[int, float]],
+#    direction: Dict[str, bool],
+# ) -> bool:
+#    """helper function"""
+#    _passed: bool
+#    if direction[key]:
+#        _passed = entry[key] > threshold[key]
+#    else:
+#        _passed = entry[key] < threshold[key]
+#    return _passed
+
+
 def parse_blast_file_to_dict(
     file: Union[str, Path],
     thresholds: Dict[str, Union[int, float]] = _thresholds,
@@ -69,6 +84,9 @@ def parse_blast_file_to_dict(
     data = dict()
     names = _config.parsing.criteria.names
     is_int = _config.parsing.criteria.is_int
+    _directions = _config.parsing.threshold_greater
+    # k := key, e := entry, t := threshold, d := direction
+    _f_eval_threshold = lambda k, e, t, d: e[k] > t[k] if d[k] else e[k] < t[k]
 
     n_pass = n_pass or len(thresholds)
     if n_pass > len(thresholds):
@@ -97,15 +115,18 @@ def parse_blast_file_to_dict(
                     }
                     criteria = compute_selection_criteria(_entry)
                     _passed = sum(
-                        1 for i in thresholds.keys() if criteria[i] > thresholds[i]
+                        1
+                        for i in thresholds.keys()
+                        if _f_eval_threshold(i, criteria, thresholds, _directions)
                     )
                     if _passed >= n_pass:
                         data[query] = target
                         # data[query][target] = _entry
         except KeyError as __k_e:
-            raise KeyError(
-                f"`thresholds` contains keys absent in entry file : {__k_e}"
-            ) from None
+            raise __k_e
+            # raise KeyError(
+            #    f"`thresholds` contains keys absent in entry file : {__k_e}"
+            # ) from None
 
     return data
 
@@ -123,6 +144,7 @@ def compute_selection_criteria(
         "subject length"
     ]
     criteria["log_bit_score"] = np.log(blast["bit score"] + 1)
+    criteria["log_e_value"] = np.log(blast["e-value"] + np.finfo(float).eps)
     criteria["% identity"] = blast["% identity"]
     return criteria
 

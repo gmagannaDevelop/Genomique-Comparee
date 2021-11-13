@@ -29,6 +29,7 @@ def add_extra_criteria(blast: pd.DataFrame, in_place=False) -> pd.DataFrame:
         blast = blast.copy()
     blast["coverage"] = (blast["s. end"] - blast["s. start"]) / blast["subject length"]
     blast["log_bit_score"] = np.log(blast["bit score"] + 1)
+    blast["log_e_value"] = np.log(blast["e-value"] + np.finfo(float).eps)
     return blast
 
 

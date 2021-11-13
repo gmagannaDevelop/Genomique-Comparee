@@ -26,3 +26,9 @@ criteria.is_int = [
 [parsing.file]
 extension = ".bl"
 strain_sep = "-vs-"
+
+[parsing.threshold_greater]
+coverage = true
+log_bit_score = true
+"% identity" = true
+log_e_value = false
