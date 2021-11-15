@@ -60,21 +60,6 @@ def parse_blast_file_to_dataframe(file: Union[str, Path]) -> pd.DataFrame:
     return x
 
 
-# def _f_eval_threshold(
-#    key: str,
-#    entry: Dict[str, Union[int, float]],
-#    threshold: Dict[str, Union[int, float]],
-#    direction: Dict[str, bool],
-# ) -> bool:
-#    """helper function"""
-#    _passed: bool
-#    if direction[key]:
-#        _passed = entry[key] > threshold[key]
-#    else:
-#        _passed = entry[key] < threshold[key]
-#    return _passed
-
-
 def parse_blast_file_to_dict(
     file: Union[str, Path],
     thresholds: Dict[str, Union[int, float]] = _thresholds,
@@ -106,8 +91,6 @@ def parse_blast_file_to_dict(
                 query, target, *criteria = line.strip().split(_config.parsing.separator)
 
                 if query not in data.keys():
-                    # data.update({query: dict()})
-
                     name_value_type = zip(names, criteria, is_int)
                     _entry = {
                         name: int(value) if _type else float(value)
@@ -121,12 +104,11 @@ def parse_blast_file_to_dict(
                     )
                     if _passed >= n_pass:
                         data[query] = target
-                        # data[query][target] = _entry
+
         except KeyError as __k_e:
-            raise __k_e
-            # raise KeyError(
-            #    f"`thresholds` contains keys absent in entry file : {__k_e}"
-            # ) from None
+            raise KeyError(
+                f"`thresholds` contains keys absent in entry file : {__k_e}"
+            ) from None
 
     return data
 
