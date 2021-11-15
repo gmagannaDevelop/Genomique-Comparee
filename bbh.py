@@ -19,7 +19,8 @@ def search_bbh(bh):
     return bbh
 
 from gencomp.parsing import parse_blast_directory_to_dict
-blast_data_dict = parse_blast_directory_to_dict("Data/Outputs_tmp")
+blast_data_dict = parse_blast_directory_to_dict("Data/Outputs")
+# blast_data_dict = parse_blast_directory_to_dict("Data/Outputs_tmp")
 bbh = search_bbh(blast_data_dict)
 
 import networkx as nx
@@ -36,4 +37,7 @@ for query_strain in bbh.keys():
 G.add_weighted_edges_from(edges)
 
 C = nx.find_cliques(G)
-strains_of_the_clique = list(C)
+strains_of_the_clique = list(C)[0]
+
+len(blast_data_dict.keys()) # Nombre de souches étudiées
+len(strains_of_the_clique) # Taille de la clique maximale
