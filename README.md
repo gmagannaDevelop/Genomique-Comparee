@@ -7,6 +7,14 @@ Students :
     * Gustavo Magaña López
     * Anthony Boutard
 
+## Installation
+
+### Using poetry (recommended)
+sdfsmdf 
+
+
+## Usage 
+
 Parse the whole `blast_outputs` directory into a dict, 
 using the `gencomp` python package:
 
