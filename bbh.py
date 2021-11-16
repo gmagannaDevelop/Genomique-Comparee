@@ -3,8 +3,12 @@ docstring
 """
 
 import gencomp.parsing as gencomp
-from typing import Tuple, List, Any
+from typing import Tuple, List, Any, Optional, Iterable
 import networkx as nx
+import random
+
+random.seed(10)
+
 
 def bbh_dict_from(bh):
     bbh = dict()
@@ -22,6 +26,7 @@ def bbh_dict_from(bh):
                     bbh[query_strain][target_strain][query_gene] = _direct
     return bbh
 
+
 # TODO: change this to yield ?
 def find_core_genome(bbh: List[Tuple[str, str]], n_species: int = 21) -> Any:
     """ """
@@ -35,19 +40,16 @@ def find_core_genome(bbh: List[Tuple[str, str]], n_species: int = 21) -> Any:
 
     return [clique for clique in cliques if len(clique) == n_species]
 
-bh = gencomp.parse_blast_directory_to_dict("Data/Outputs")
 
-def search_bbh(bh, strain_set=None) -> List[Tuple[str, str]]:
+def search_bbh(bh, strain_set: Optional[Iterable[str]] = None) -> List[Tuple[str, str]]:
     """Search bidirectional best hits"""
     # Copy because we will modify the hits
     bh = bh.copy()
 
     bbh = list()
-    
+
     strain_set = strain_set or bh.keys()
-    #if strain_set is None:
-    #    strain_set = bh.keys()
-    
+
     for query_strain in strain_set:
         for target_strain in bh[query_strain].keys():
             for query_gene in bh[query_strain][target_strain].keys():
@@ -59,10 +61,6 @@ def search_bbh(bh, strain_set=None) -> List[Tuple[str, str]]:
                     bbh.append((_direct, _inverse))
     return bbh
 
-
-import random
-
-random.seed(10)
 
 bh = gencomp.parse_blast_directory_to_dict("Data/Outputs_tmp")
 
@@ -78,8 +76,3 @@ strain_subset.append(strain)
 constrained_strain_set.remove(strain)
 
 bbh = search_bbh(bh)
-
-
-
-
-
