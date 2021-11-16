@@ -13,28 +13,28 @@ Students :
 Parse the whole `blast_outputs` directory into a dict, containing the best hits.
 ```python
 from gencomp.parsing import parse_blast_directory_to_dict
+import numpy as np
+import gencomp.core_genome as cgenome
 
-blast_data_dict = parse_blast_directory_to_dict("blast_outputs")
+# unidirectional best hits
+bh = parse_blast_directory_to_dict("Data/Outputs/")
+# bidirectional best hits
+bbh = cgenome.search_bbh(bh)
+# core genome (list of cliques)
+core_genome = cgenome.find_core_genome(bbh, 21)
+
+# random strain subsets sorted by size in increasing order
+strains = [
+    set(np.random.choice(list(bh.keys()), i, replace=False)) for i in range(2, 21)
+]
+
+sub_bbh = cgenome.search_bbh(bh, strains[4])
+sub_core_genome = cgenome.find_core_genome(sub_bbh, len(strains[4]))
+
 ```
 
-This will give you a dictionnary as follows:
-```python
-blast_data_dict["query_strain"]["target_strain"] = {
-    "query_gene1": "target_gene1",
-    "query_gene2": "target_gene3",
-    "query_gene5": "target_gene2",
-    # It jumps from 2 to 5 because query_gene3 and query_gene4
-    # did not meet the thresholding criteria to be considered 
-    # valid hits
-    .
-    .
-    .
-}
-```
-This means that when comparing `query_strain` to `target_strain`, `query_gene`'s 
-best hit was `target_gene`.
+All of the entries of `bh` have been selected according to [our thresholds](https://github.com/gmagannaDevelop/Genomique-Comparee/tree/main/Figures) computed by [KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html?highlight=kmeans#sklearn.cluster.KMeans).
 
-All of these entries have been selected according to [our thresholds](https://github.com/gmagannaDevelop/Genomique-Comparee/tree/main/Figures) computed by [KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html?highlight=kmeans#sklearn.cluster.KMeans).
 
 ## TODO 
  
