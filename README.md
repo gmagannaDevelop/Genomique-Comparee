@@ -12,9 +12,12 @@ Students :
 
 Parse the whole `blast_outputs` directory into a dict, containing the best hits.
 ```python
-from gencomp.parsing import parse_blast_directory_to_dict
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 import gencomp.core_genome as cgenome
+from gencomp.parsing import parse_blast_directory_to_dict
+
 
 # unidirectional best hits
 bh = parse_blast_directory_to_dict("Data/Outputs/")
@@ -31,6 +34,19 @@ strains = [
 sub_bbh = cgenome.search_bbh(bh, strains[4])
 sub_core_genome = cgenome.find_core_genome(sub_bbh, len(strains[4]))
 
+## WARNING, this part takes 371 seconds on my i7-10875H (16) @ 5.100GHz
+# Diversity calculation :
+core_genomes_dict = cgenome.parallel_find_random_core_genomes(
+    bh, # unidirectional best hits
+    sizes=list(range(2, 21)), # sizes [2, ..., 20]
+    batch_size=20, # batch size is set to 20C21 = 20 (higher number of repetitions implies duplicates on 
+                   # strain subsets of size 20
+    n_threads=16   # adjust according to you machine
+)
+cg_df = pd.DataFrame(core_genomes_dict)
+cg_df.to_csv("core_genomes_diversity.csv")
+cg_df.plot.scatter("n_strains", "core_genome_size")
+plt.show()
 ```
 
 All of the entries of `bh` have been selected according to [our thresholds](https://github.com/gmagannaDevelop/Genomique-Comparee/tree/main/Figures) computed by [KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html?highlight=kmeans#sklearn.cluster.KMeans).
